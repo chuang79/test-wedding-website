@@ -111,58 +111,64 @@ export default async function HomePage({
   ];
 
   return (
-    <main className="stack home-flow">
-      <section id="overview" className="card hero hero-home section-anchor">
-        <div className="stack hero-copy">
-          <span className="badge">{t('badge')}</span>
-          <h1>{t('title')}</h1>
-          <p className="hero-subtext">{t('intro')}</p>
-        </div>
-
-        <aside className="hero-panel">
-          <div className="stack">
-            <h2>{copy.chaptersTitle}</h2>
-            <p>{copy.chaptersIntro}</p>
-          </div>
-          <div className="row cta-row">
-            <Link className="btn" href={`/${locale}/rsvp`}>
-              {t('rsvpCta')}
-            </Link>
-            <Link className="btn btn-ghost" href={`/${locale}/faq`}>
-              {t('faqCta')}
-            </Link>
-            <Link className="btn btn-ghost" href={`/${locale}/chat`}>
-              {t('chatCta')}
-            </Link>
-          </div>
-        </aside>
-      </section>
-
-      <section className="chapter-stream">
-        {chapters.map((chapter, chapterIndex) => (
-          <article key={chapter.id} id={chapter.id} className="chapter-row section-anchor">
-            <span className="section-kicker">{chapter.kicker}</span>
-            <div className="chapter-content">
-              <h2>{chapter.title}</h2>
-              <p>{chapter.intro}</p>
+    <main className="home-flow">
+      <section id="overview" className="home-section section-anchor">
+        <div className="home-section-inner">
+          <div className="hero-home">
+            <div className="stack hero-copy">
+              <span className="badge">{t('badge')}</span>
+              <h1>{t('title')}</h1>
+              <p className="hero-subtext">{t('intro')}</p>
             </div>
-            <ul className="chapter-list">
-              {chapter.items.map((item, itemIndex) => (
-                <li key={`${chapter.id}-${itemIndex}`}>
-                  <span>{days[itemIndex] ?? `0${itemIndex + 1}`}</span>
-                  <p>{item}</p>
-                </li>
-              ))}
-            </ul>
-            <a className="chapter-link" href={chapter.ctaHref}>
-              {chapter.ctaLabel}
-            </a>
-            <span className="chapter-index" aria-hidden>
-              0{chapterIndex + 1}
-            </span>
-          </article>
-        ))}
+
+            <aside className="hero-panel">
+              <div className="stack">
+                <h2>{copy.chaptersTitle}</h2>
+                <p>{copy.chaptersIntro}</p>
+              </div>
+              <div className="row cta-row">
+                <Link className="btn" href={`/${locale}/rsvp`}>
+                  {t('rsvpCta')}
+                </Link>
+                <Link className="btn btn-ghost" href={`/${locale}/faq`}>
+                  {t('faqCta')}
+                </Link>
+                <Link className="btn btn-ghost" href={`/${locale}/chat`}>
+                  {t('chatCta')}
+                </Link>
+              </div>
+            </aside>
+          </div>
+        </div>
       </section>
+
+      {chapters.map((chapter, chapterIndex) => (
+        <article key={chapter.id} id={chapter.id} className="home-section section-anchor">
+          <div className="home-section-inner">
+            <div className="chapter-row">
+              <span className="section-kicker">{chapter.kicker}</span>
+              <div className="chapter-content">
+                <h2>{chapter.title}</h2>
+                <p>{chapter.intro}</p>
+              </div>
+              <ul className="chapter-list">
+                {chapter.items.map((item, itemIndex) => (
+                  <li key={`${chapter.id}-${itemIndex}`}>
+                    <span>{days[itemIndex] ?? `0${itemIndex + 1}`}</span>
+                    <p>{item}</p>
+                  </li>
+                ))}
+              </ul>
+              <a className="chapter-link" href={chapter.ctaHref}>
+                {chapter.ctaLabel}
+              </a>
+              <span className="chapter-index" aria-hidden>
+                0{chapterIndex + 1}
+              </span>
+            </div>
+          </div>
+        </article>
+      ))}
     </main>
   );
 }
