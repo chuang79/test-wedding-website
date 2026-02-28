@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Household {
+  id              String                   @id @default(cuid())
+  code            String                   @unique
+  householdName   String
+  maxGuests       Int
+  contactEmail    String?
+  localeDefault   String                   @default("en")
+  notes           String?
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+  rsvp            HouseholdRsvp?
+  eventResponses  HouseholdEventResponse[]
+  auditLogs       RsvpAuditLog[]
+
+  @@index([householdName])
+}
+
+model Event {
+  id            String                   @id @default(cuid())
+  slug          String                   @unique
+  name          String
+  startsAt      DateTime
+  sortOrder     Int
+  enabled       Boolean                  @default(true)
+  createdAt     DateTime                 @default(now())
+  updatedAt     DateTime                 @updatedAt
+  responses     HouseholdEventResponse[]
+
+  @@index([sortOrder])
+}
+
+model HouseholdEventResponse {
+  id            String     @id @default(cuid())
+  householdId   String
+  eventId       String
+  attending     Boolean
+  attendeeCount Int
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  household     Household  @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  event         Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([householdId, eventId])
+  @@index([eventId])
+}
+
+model HouseholdRsvp {
+  id               String    @id @default(cuid())
+  householdId      String    @unique
+  dietaryNotes     String?
+  plushieCount     Int       @default(0)
+  karaokeSongsText String?
+  submittedAt      DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  household        Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+}
+
+model RsvpAuditLog {
+  id          String    @id @default(cuid())
+  householdId String
+  action      String
+  actorType   String
+  payloadJson Json
+  createdAt   DateTime  @default(now())
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@index([householdId, createdAt])
+}
