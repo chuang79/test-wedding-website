@@ -57,10 +57,6 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider messages={messages}>
       <div className="site-shell">
-        <div className="site-glow site-glow-a" aria-hidden />
-        <div className="site-glow site-glow-b" aria-hidden />
-        <div className="site-glow site-glow-c" aria-hidden />
-
         <header className="site-header">
           <div className="site-header-inner">
             <a href={`/${locale}#overview`} className="brand-mark">
