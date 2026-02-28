@@ -33,7 +33,6 @@ body {
 }
 
 html {
-  scroll-behavior: smooth;
   scroll-padding-top: 6.75rem;
 }
 
@@ -204,6 +203,9 @@ main.home-flow {
   width: 100%;
   padding: clamp(4rem, 8vw, 8rem) clamp(1.5rem, 5vw, 6rem);
 }
+
+/* Scroll-reveal: only active once JS has mounted (home-flow--js flag).
+   SSR-rendered content is never invisible without JS. */
 
 .row {
   display: flex;
