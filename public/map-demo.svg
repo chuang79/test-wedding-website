@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 380"
+     style="font-family: 'Palatino Linotype', Georgia, serif; color: #2a1e0e;">
+
+  <!-- Outer decorative double border -->
+  <rect x="10" y="10" width="560" height="360" fill="none" stroke="#2a1e0e" stroke-width="0.9"/>
+  <rect x="14" y="14" width="552" height="352" fill="none" stroke="#2a1e0e" stroke-width="0.3"/>
+
+  <!-- Sea stipple pattern -->
+  <defs>
+    <pattern id="sea" x="0" y="0" width="7" height="5" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="2.5" x2="7" y2="2.5" stroke="#2a1e0e" stroke-width="0.22" opacity="0.38"/>
+    </pattern>
+    <clipPath id="sea-mask">
+      <path d="M14,14 L130,14 L124,50 L132,95 L122,145 L136,195 L124,250 L138,310 L14,366 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- Sea fill -->
+  <rect x="14" y="14" width="130" height="352" fill="url(#sea)" clip-path="url(#sea-mask)"/>
+  <text x="68" y="195" font-size="10.5" font-style="italic" letter-spacing="0.18em"
+        fill="#2a1e0e" opacity="0.55" text-anchor="middle">MARE</text>
+  <text x="68" y="210" font-size="10.5" font-style="italic" letter-spacing="0.18em"
+        fill="#2a1e0e" opacity="0.55" text-anchor="middle">TIRRENO</text>
+
+  <!-- Coastline -->
+  <path d="M130,14 C126,38 134,62 124,90 C116,112 132,138 122,165
+           C114,188 130,212 124,238 C116,262 136,288 128,314 C122,334 134,352 130,366"
+        fill="none" stroke="#2a1e0e" stroke-width="1.3" stroke-linejoin="round"/>
+
+  <!-- Coastal hachures (land side) -->
+  <g stroke="#2a1e0e" stroke-width="0.38" opacity="0.48">
+    <line x1="130" y1="35" x2="142" y2="37"/>
+    <line x1="128" y1="52" x2="140" y2="53"/>
+    <line x1="132" y1="70" x2="144" y2="71"/>
+    <line x1="124" y1="90" x2="136" y2="90"/>
+    <line x1="128" y1="110" x2="140" y2="110"/>
+    <line x1="122" y1="130" x2="134" y2="129"/>
+    <line x1="128" y1="150" x2="140" y2="149"/>
+    <line x1="122" y1="170" x2="134" y2="169"/>
+    <line x1="128" y1="192" x2="140" y2="191"/>
+    <line x1="122" y1="214" x2="134" y2="213"/>
+    <line x1="130" y1="236" x2="142" y2="235"/>
+    <line x1="120" y1="258" x2="132" y2="257"/>
+    <line x1="132" y1="280" x2="144" y2="279"/>
+    <line x1="126" y1="300" x2="138" y2="299"/>
+    <line x1="130" y1="322" x2="142" y2="321"/>
+  </g>
+
+  <!-- Inland contour lines — gentle rolling hills -->
+  <path d="M160,55 C190,44 228,40 268,48 C300,54 330,44 368,50 C395,55 425,44 462,50 C488,54 515,45 548,51"
+        fill="none" stroke="#2a1e0e" stroke-width="0.38" opacity="0.55"/>
+  <path d="M155,88 C192,74 238,68 282,78 C318,86 355,72 396,80 C428,86 460,74 500,82 C524,87 545,76 562,82"
+        fill="none" stroke="#2a1e0e" stroke-width="0.35" opacity="0.5"/>
+  <path d="M148,125 C190,108 242,100 292,112 C335,122 375,106 420,116 C455,124 490,110 530,118 C548,123 562,114 575,120"
+        fill="none" stroke="#2a1e0e" stroke-width="0.32" opacity="0.45"/>
+  <path d="M152,168 C198,148 255,140 308,154 C355,166 398,148 448,160 C482,170 520,154 555,162"
+        fill="none" stroke="#2a1e0e" stroke-width="0.32" opacity="0.42"/>
+  <path d="M148,215 C198,192 260,182 318,198 C368,212 415,192 468,206 C505,217 538,200 562,208"
+        fill="none" stroke="#2a1e0e" stroke-width="0.3" opacity="0.38"/>
+
+  <!-- Monte Amiata summit hachures (upper right) -->
+  <g stroke="#2a1e0e" stroke-width="0.38" opacity="0.52">
+    <line x1="450" y1="28" x2="448" y2="42"/>
+    <line x1="462" y1="24" x2="460" y2="38"/>
+    <line x1="474" y1="27" x2="472" y2="41"/>
+    <line x1="486" y1="22" x2="484" y2="36"/>
+    <line x1="498" y1="25" x2="496" y2="39"/>
+    <line x1="440" y1="46" x2="438" y2="60"/>
+    <line x1="454" y1="42" x2="452" y2="56"/>
+    <line x1="468" y1="40" x2="466" y2="54"/>
+    <line x1="482" y1="44" x2="480" y2="58"/>
+    <line x1="496" y1="40" x2="494" y2="54"/>
+    <line x1="510" y1="43" x2="508" y2="57"/>
+  </g>
+  <text x="476" y="72" font-size="8" font-style="italic" fill="#2a1e0e" opacity="0.72"
+        text-anchor="middle" letter-spacing="0.06em">M. Amiata</text>
+
+  <!-- Mid-range hill hachures -->
+  <g stroke="#2a1e0e" stroke-width="0.32" opacity="0.4">
+    <line x1="330" y1="96" x2="328" y2="108"/>
+    <line x1="344" y1="90" x2="342" y2="102"/>
+    <line x1="358" y1="93" x2="356" y2="105"/>
+    <line x1="372" y1="88" x2="370" y2="100"/>
+    <line x1="386" y1="92" x2="384" y2="104"/>
+    <line x1="340" y1="114" x2="338" y2="126"/>
+    <line x1="356" y1="108" x2="354" y2="120"/>
+    <line x1="372" y1="112" x2="370" y2="124"/>
+  </g>
+
+  <!-- Ombrone River — tapered, branching from inland to sea near Grosseto -->
+  <path d="M415,105 C392,118 368,132 342,148 C318,163 295,174 272,186
+           C250,198 228,210 208,224 C193,235 180,246 166,258"
+        fill="none" stroke="#2a1e0e" stroke-width="1.1" stroke-linecap="round" opacity="0.65"/>
+  <!-- Small tributary -->
+  <path d="M380,130 C365,140 352,148 342,148"
+        fill="none" stroke="#2a1e0e" stroke-width="0.6" stroke-linecap="round" opacity="0.55"/>
+  <text x="320" y="168" font-size="7" font-style="italic" fill="#2a1e0e" opacity="0.65"
+        transform="rotate(-18,320,168)" letter-spacing="0.07em">F. Ombrone</text>
+
+  <!-- Grosseto — principal town marker -->
+  <circle cx="186" cy="262" r="4" fill="none" stroke="#2a1e0e" stroke-width="0.9"/>
+  <circle cx="186" cy="262" r="1.4" fill="#2a1e0e"/>
+  <text x="196" y="259" font-size="10" fill="#2a1e0e" letter-spacing="0.07em">GROSSETO</text>
+
+  <!-- Scansano -->
+  <circle cx="302" cy="206" r="2.8" fill="none" stroke="#2a1e0e" stroke-width="0.7"/>
+  <circle cx="302" cy="206" r="0.9" fill="#2a1e0e"/>
+  <text x="310" y="204" font-size="8.5" fill="#2a1e0e" letter-spacing="0.05em">Scansano</text>
+
+  <!-- Conti di San Bonifacio — estate marker (cross-in-circle) -->
+  <circle cx="262" cy="172" r="5.5" fill="none" stroke="#2a1e0e" stroke-width="1.1"/>
+  <line x1="256" y1="166" x2="268" y2="178" stroke="#2a1e0e" stroke-width="0.7"/>
+  <line x1="268" y1="166" x2="256" y2="178" stroke="#2a1e0e" stroke-width="0.7"/>
+  <text x="272" y="165" font-size="7.5" font-style="italic" fill="#2a1e0e" letter-spacing="0.04em">Conti di</text>
+  <text x="272" y="176" font-size="7.5" font-style="italic" fill="#2a1e0e" letter-spacing="0.04em">S. Bonifacio</text>
+
+  <!-- Cypress symbols near estate -->
+  <g fill="#2a1e0e" opacity="0.45">
+    <ellipse cx="248" cy="162" rx="2.2" ry="5.5"/>
+    <ellipse cx="243" cy="164" rx="2.2" ry="5.5"/>
+    <ellipse cx="252" cy="165" rx="2.2" ry="5.5"/>
+  </g>
+
+  <!-- Orbetello / southern coast label -->
+  <text x="148" y="325" font-size="8" font-style="italic" fill="#2a1e0e" opacity="0.6"
+        letter-spacing="0.05em">Orbetello</text>
+  <circle cx="145" cy="320" r="2" fill="none" stroke="#2a1e0e" stroke-width="0.6"/>
+
+  <!-- Compass rose — top right -->
+  <g transform="translate(530,55)" stroke="#2a1e0e" fill="#2a1e0e">
+    <line x1="0" y1="-20" x2="0" y2="20" stroke-width="0.5"/>
+    <line x1="-20" y1="0" x2="20" y2="0" stroke-width="0.5"/>
+    <line x1="-14" y1="-14" x2="14" y2="14" stroke-width="0.3" opacity="0.4"/>
+    <line x1="14" y1="-14" x2="-14" y2="14" stroke-width="0.3" opacity="0.4"/>
+    <polygon points="0,-20 -4,-8 4,-8"/>
+    <polygon points="0,20 -4,8 4,8" fill="none" stroke-width="0.7"/>
+    <text x="0" y="-24" font-size="8.5" text-anchor="middle" letter-spacing="0.1em">N</text>
+  </g>
+
+  <!-- Title cartouche — lower left -->
+  <g transform="translate(22,280)">
+    <rect x="0" y="0" width="118" height="64" fill="#f5f0e8" stroke="#2a1e0e" stroke-width="0.7"/>
+    <rect x="3.5" y="3.5" width="111" height="57" fill="none" stroke="#2a1e0e" stroke-width="0.25"/>
+    <text x="59" y="18" font-size="8" text-anchor="middle" letter-spacing="0.16em"
+          fill="#2a1e0e">MAREMMA</text>
+    <text x="59" y="30" font-size="6.5" text-anchor="middle" letter-spacing="0.1em"
+          fill="#2a1e0e" opacity="0.7">TOSCANA</text>
+    <line x1="14" y1="35" x2="104" y2="35" stroke="#2a1e0e" stroke-width="0.3"/>
+    <text x="59" y="46" font-size="6" font-style="italic" text-anchor="middle"
+          fill="#2a1e0e" opacity="0.65" letter-spacing="0.06em">Maggio 2027</text>
+    <text x="59" y="56" font-size="5.5" font-style="italic" text-anchor="middle"
+          fill="#2a1e0e" opacity="0.5" letter-spacing="0.04em">C ✦ J</text>
+  </g>
+
+</svg>

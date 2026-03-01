@@ -113,6 +113,12 @@ export default async function HomePage({
   return (
     <main className="home-flow">
       <section id="overview" className="home-section section-anchor">
+        <div className="hero-bg" aria-hidden>
+          <img
+            src="https://contidisanbonifacio.com/wp-content/uploads/conti-di-san-bonifacio-boutique-hotel-wine-resort-in-tuscany.webp"
+            alt=""
+          />
+        </div>
         <div className="home-section-inner">
           <div className="hero-home">
             <div className="stack hero-copy">
@@ -169,6 +175,19 @@ export default async function HomePage({
           </div>
         </article>
       ))}
+
+      <section className="home-section map-demo-section">
+        <div className="home-section-inner map-demo-inner">
+          <div className="map-demo-label">
+            <span className="section-kicker">Venue</span>
+            <h2>Conti di San Bonifacio</h2>
+            <p>Maremma, Toscana — Maggio 2027</p>
+          </div>
+          <figure className="map-demo-figure">
+            <img src="/map-demo.svg" alt="Cartographic map of Maremma, Toscana" />
+          </figure>
+        </div>
+      </section>
     </main>
   );
 }
