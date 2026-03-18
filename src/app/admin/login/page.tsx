@@ -21,13 +21,17 @@ export default function AdminLoginPage() {
         body: JSON.stringify({ email })
       });
 
-      const data = (await response.json()) as { message?: string; error?: string };
+      const data = (await response.json()) as { message?: string; error?: string; redirectTo?: string };
 
       if (!response.ok) {
         throw new Error(data.error ?? 'Unable to send login link.');
       }
 
       setMessage(data.message ?? 'Check your email for a sign-in link.');
+
+      if (data.redirectTo) {
+        window.location.assign(data.redirectTo);
+      }
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : 'Unable to send login link.');
     } finally {

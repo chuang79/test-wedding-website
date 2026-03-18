@@ -10,14 +10,14 @@ export default async function FaqPage({
   const t = await getTranslations({ locale, namespace: 'faq' });
 
   return (
-    <main className="stack">
-      <section className="stack card hero">
+    <main className="stack content-page">
+      <section className="stack hero content-hero">
         <span className="badge">FAQ</span>
         <h1>{t('title')}</h1>
         <p className="hero-subtext">{t('intro')}</p>
       </section>
 
-      <section className="stack card faq-grid">
+      <section className="stack faq-grid content-panel">
         <article className="faq-item">
           <h2>{t('q1')}</h2>
           <p>{t('a1')}</p>
@@ -36,7 +36,7 @@ export default async function FaqPage({
         </article>
       </section>
 
-      <div className="row">
+      <div className="row content-row">
         <Link className="btn btn-ghost" href={`/${locale}/chat`}>
           {t('chatCta')}
         </Link>

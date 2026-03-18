@@ -1,33 +1,34 @@
 import { NextResponse } from 'next/server';
-import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { env } from '@/lib/env';
+import { getAdminUserOrNull } from '@/lib/auth';
+import { getAdminSnapshotFromDevStore, shouldUseDevRsvpStore } from '@/lib/dev-rsvp-store';
 import { prisma } from '@/lib/prisma';
 import { toCsv } from '@/lib/csv';
 
 export async function GET() {
-  const supabase = createSupabaseServerClient();
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-
+  const user = await getAdminUserOrNull();
   if (!user?.email) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+  let households;
+  try {
+    households = await prisma.household.findMany({
+      include: {
+        rsvp: true,
+        eventResponses: {
+          include: { event: true },
+          orderBy: { event: { sortOrder: 'asc' } }
+        }
+      },
+      orderBy: { householdName: 'asc' }
+    });
+  } catch (error) {
+    if (!shouldUseDevRsvpStore(error)) {
+      return NextResponse.json({ error: 'Unable to export RSVP data.' }, { status: 500 });
+    }
 
-  if (env.ADMIN_ALLOWED_EMAILS.length > 0 && !env.ADMIN_ALLOWED_EMAILS.includes(user.email.toLowerCase())) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    const snapshot = await getAdminSnapshotFromDevStore();
+    households = snapshot.households;
   }
-
-  const households = await prisma.household.findMany({
-    include: {
-      rsvp: true,
-      eventResponses: {
-        include: { event: true },
-        orderBy: { event: { sortOrder: 'asc' } }
-      }
-    },
-    orderBy: { householdName: 'asc' }
-  });
 
   const rows = households.map((household) => {
     const row: Record<string, string | number | boolean | null | undefined> = {
@@ -36,9 +37,13 @@ export async function GET() {
       maxGuests: household.maxGuests,
       contactEmail: household.contactEmail,
       submittedAt: household.rsvp?.submittedAt?.toISOString(),
-      plushieCount: household.rsvp?.plushieCount ?? 0,
-      karaokeSongsText: household.rsvp?.karaokeSongsText,
-      dietaryNotes: household.rsvp?.dietaryNotes
+      guestName: household.rsvp?.guestName,
+      bringingPlusOne: household.rsvp?.bringingPlusOne ?? false,
+      plusOneName: household.rsvp?.plusOneName,
+      dietaryNotes: household.rsvp?.dietaryNotes,
+      transportMode: household.rsvp?.transportMode,
+      songRequestsText: household.rsvp?.karaokeSongsText,
+      messageToCouple: household.rsvp?.messageToCouple
     };
 
     for (const response of household.eventResponses) {

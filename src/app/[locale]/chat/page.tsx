@@ -51,14 +51,14 @@ export default function ChatPage() {
   }
 
   return (
-    <main className="stack">
-      <section className="stack card hero">
-        <span className="badge">Guide</span>
+    <main className="stack content-page">
+      <section className="stack hero content-hero">
+        <span className="badge">Ask Kittie</span>
         <h1>{t('title')}</h1>
         <p className="hero-subtext">{t('intro')}</p>
       </section>
 
-      <section className="card chat-shell">
+      <section className="chat-shell content-panel">
         <div className="chat-log">
           {history.length === 0 ? <p className="chat-empty">{t('empty')}</p> : null}
           {history.map((entry, index) => (
@@ -88,7 +88,7 @@ export default function ChatPage() {
         </form>
       </section>
 
-      <div className="row">
+      <div className="row content-row">
         <Link className="btn btn-ghost" href={`/${locale}/faq`}>
           {t('faqCta')}
         </Link>

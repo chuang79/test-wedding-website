@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server';
+import { lookupGuestInDevStore, shouldUseDevRsvpStore } from '@/lib/dev-rsvp-store';
 import { prisma } from '@/lib/prisma';
 import { getDeadlineDate, isLateSubmission, normalizeInviteCode } from '@/lib/rsvp';
 
 export async function POST(request: Request) {
+  let code = '';
+
   try {
     const body = (await request.json()) as { code?: string };
-    const code = normalizeInviteCode(body.code ?? '');
+    code = normalizeInviteCode(body.code ?? '');
 
     if (!code) {
       return NextResponse.json({ error: 'Invite code is required.' }, { status: 400 });
@@ -41,9 +44,13 @@ export async function POST(request: Request) {
       })),
       existing: household.rsvp
         ? {
+            guestName: household.rsvp.guestName,
+            bringingPlusOne: household.rsvp.bringingPlusOne,
+            plusOneName: household.rsvp.plusOneName,
             dietaryNotes: household.rsvp.dietaryNotes,
-            plushieCount: household.rsvp.plushieCount,
-            karaokeSongsText: household.rsvp.karaokeSongsText,
+            transportMode: household.rsvp.transportMode,
+            songRequestsText: household.rsvp.karaokeSongsText,
+            messageToCouple: household.rsvp.messageToCouple,
             eventResponses: household.eventResponses.map((response) => ({
               eventId: response.eventId,
               attending: response.attending,
@@ -54,7 +61,35 @@ export async function POST(request: Request) {
       deadline: getDeadlineDate().toISOString(),
       late: isLateSubmission()
     });
-  } catch {
+  } catch (error) {
+    if (shouldUseDevRsvpStore(error)) {
+      if (!code) {
+        return NextResponse.json({ error: 'Invite code is required.' }, { status: 400 });
+      }
+
+      const lookup = await lookupGuestInDevStore(code);
+
+      if (!lookup) {
+        return NextResponse.json({ error: 'Invite code not found.' }, { status: 404 });
+      }
+
+      return NextResponse.json({
+        household: {
+          householdName: lookup.household.householdName,
+          maxGuests: lookup.household.maxGuests,
+          code: lookup.household.code
+        },
+        events: lookup.events.map((event) => ({
+          id: event.id,
+          name: event.name,
+          startsAt: new Date(event.startsAt).toISOString()
+        })),
+        existing: lookup.existing,
+        deadline: getDeadlineDate().toISOString(),
+        late: isLateSubmission()
+      });
+    }
+
     return NextResponse.json({ error: 'Failed to lookup invite code.' }, { status: 500 });
   }
 }

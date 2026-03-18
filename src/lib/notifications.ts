@@ -9,6 +9,7 @@ if (env.RESEND_API_KEY) {
 
 type NotificationPayload = {
   householdName: string;
+  guestName?: string;
   code: string;
   late: boolean;
   updatedAt: string;
@@ -25,9 +26,12 @@ export async function sendRsvpNotification(payload: NotificationPayload) {
     subject: `RSVP updated: ${payload.householdName}`,
     text: [
       `Household: ${payload.householdName}`,
+      payload.guestName ? `Guest: ${payload.guestName}` : null,
       `Invite code: ${payload.code}`,
       `Updated: ${payload.updatedAt}`,
       `Late submission: ${payload.late ? 'Yes' : 'No'}`
-    ].join('\n')
+    ]
+      .filter(Boolean)
+      .join('\n')
   });
 }

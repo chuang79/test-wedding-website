@@ -10,9 +10,13 @@ type EventItem = {
 };
 
 type ExistingPayload = {
+  guestName: string | null;
+  bringingPlusOne: boolean;
+  plusOneName: string | null;
   dietaryNotes: string | null;
-  plushieCount: number;
-  karaokeSongsText: string | null;
+  transportMode: string | null;
+  songRequestsText: string | null;
+  messageToCouple: string | null;
   eventResponses: Array<{
     eventId: string;
     attending: boolean;
@@ -41,10 +45,14 @@ export function RsvpForm({ locale }: Props) {
 
   const [code, setCode] = useState('');
   const [lookup, setLookup] = useState<LookupPayload | null>(null);
+  const [guestName, setGuestName] = useState('');
+  const [bringingPlusOne, setBringingPlusOne] = useState(false);
+  const [plusOneName, setPlusOneName] = useState('');
   const [dietaryNotes, setDietaryNotes] = useState('');
-  const [plushieCount, setPlushieCount] = useState(0);
-  const [karaokeSongsText, setKaraokeSongsText] = useState('');
-  const [eventResponses, setEventResponses] = useState<Record<string, { attending: boolean; attendeeCount: number }>>({});
+  const [transportMode, setTransportMode] = useState('');
+  const [songRequestsText, setSongRequestsText] = useState('');
+  const [messageToCouple, setMessageToCouple] = useState('');
+  const [eventSelections, setEventSelections] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -56,6 +64,9 @@ export function RsvpForm({ locale }: Props) {
 
     return new Date(lookup.deadline).toLocaleString(locale);
   }, [lookup, locale]);
+
+  const plusOneAvailable = (lookup?.household.maxGuests ?? 1) > 1;
+  const attendeeCount = bringingPlusOne && plusOneAvailable ? 2 : 1;
 
   async function lookupInvite(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -77,19 +88,22 @@ export function RsvpForm({ locale }: Props) {
       }
 
       setLookup(data);
-      setDietaryNotes(data.existing?.dietaryNotes ?? '');
-      setPlushieCount(data.existing?.plushieCount ?? 0);
-      setKaraokeSongsText(data.existing?.karaokeSongsText ?? '');
+      setGuestName(data.existing?.guestName ?? '');
 
-      const responseMap: Record<string, { attending: boolean; attendeeCount: number }> = {};
+      const hasStoredPlusOne = Boolean(data.existing?.bringingPlusOne) && data.household.maxGuests > 1;
+      setBringingPlusOne(hasStoredPlusOne);
+      setPlusOneName(data.existing?.plusOneName ?? '');
+      setDietaryNotes(data.existing?.dietaryNotes ?? '');
+      setTransportMode(data.existing?.transportMode ?? '');
+      setSongRequestsText(data.existing?.songRequestsText ?? '');
+      setMessageToCouple(data.existing?.messageToCouple ?? '');
+
+      const selectionMap: Record<string, boolean> = {};
       for (const eventItem of data.events) {
         const existing = data.existing?.eventResponses.find((item) => item.eventId === eventItem.id);
-        responseMap[eventItem.id] = {
-          attending: existing?.attending ?? false,
-          attendeeCount: existing?.attendeeCount ?? 0
-        };
+        selectionMap[eventItem.id] = existing?.attending ?? false;
       }
-      setEventResponses(responseMap);
+      setEventSelections(selectionMap);
     } catch (lookupError) {
       setLookup(null);
       setError(lookupError instanceof Error ? lookupError.message : t('lookupFailed'));
@@ -111,14 +125,21 @@ export function RsvpForm({ locale }: Props) {
     try {
       const payload = {
         code: lookup.household.code,
+        guestName,
+        bringingPlusOne: plusOneAvailable ? bringingPlusOne : false,
+        plusOneName: plusOneAvailable && bringingPlusOne ? plusOneName : '',
         dietaryNotes,
-        plushieCount,
-        karaokeSongsText,
-        eventResponses: Object.entries(eventResponses).map(([eventId, value]) => ({
-          eventId,
-          attending: value.attending,
-          attendeeCount: value.attending ? value.attendeeCount : 0
-        }))
+        transportMode,
+        songRequestsText,
+        messageToCouple,
+        eventResponses: lookup.events.map((eventItem) => {
+          const attending = Boolean(eventSelections[eventItem.id]);
+          return {
+            eventId: eventItem.id,
+            attending,
+            attendeeCount: attending ? attendeeCount : 0
+          };
+        })
       };
 
       const response = await fetch('/api/guest/rsvp', {
@@ -140,9 +161,16 @@ export function RsvpForm({ locale }: Props) {
     }
   }
 
+  function toggleEvent(eventId: string) {
+    setEventSelections((current) => ({
+      ...current,
+      [eventId]: !current[eventId]
+    }));
+  }
+
   return (
-    <div className="stack">
-      <form onSubmit={lookupInvite} className="card stack form-grid">
+    <div className="stack content-panel">
+      <form onSubmit={lookupInvite} className="stack form-grid rsvp-lookup-form">
         <h2>{t('lookupTitle')}</h2>
         <label>
           {t('inviteCode')}
@@ -162,7 +190,7 @@ export function RsvpForm({ locale }: Props) {
       {success ? <p className="success">{success}</p> : null}
 
       {lookup ? (
-        <form onSubmit={submitRsvp} className="stack card form-grid">
+        <form onSubmit={submitRsvp} className="stack form-grid rsvp-details-form">
           <h2>{t('detailsTitle')}</h2>
           <div className="info-grid">
             <div className="info-pill">
@@ -181,58 +209,39 @@ export function RsvpForm({ locale }: Props) {
 
           {lookup.late ? <div className="warning">{t('lateWarning')}</div> : null}
 
-          <div className="event-grid">
-            {lookup.events.map((eventItem) => {
-              const state = eventResponses[eventItem.id] ?? { attending: false, attendeeCount: 0 };
-              return (
-                <div key={eventItem.id} className="event-card stack">
-                  <h3>{eventItem.name}</h3>
-                  <p>{new Date(eventItem.startsAt).toLocaleString(locale)}</p>
-                  <label>
-                    {t('attending')}
-                    <select
-                      value={state.attending ? 'yes' : 'no'}
-                      onChange={(event) =>
-                        setEventResponses((current) => ({
-                          ...current,
-                          [eventItem.id]: {
-                            attending: event.target.value === 'yes',
-                            attendeeCount:
-                              event.target.value === 'yes'
-                                ? Math.max(current[eventItem.id]?.attendeeCount ?? 1, 1)
-                                : 0
-                          }
-                        }))
-                      }
-                    >
-                      <option value="yes">{t('yes')}</option>
-                      <option value="no">{t('no')}</option>
-                    </select>
-                  </label>
+          <div className="form-split">
+            <label>
+              {t('guestName')}
+              <input value={guestName} onChange={(event) => setGuestName(event.target.value)} required />
+            </label>
 
-                  <label>
-                    {t('attendeeCount')}
-                    <input
-                      type="number"
-                      min={state.attending ? 1 : 0}
-                      max={lookup.household.maxGuests}
-                      value={state.attendeeCount}
-                      onChange={(event) =>
-                        setEventResponses((current) => ({
-                          ...current,
-                          [eventItem.id]: {
-                            attending: state.attending,
-                            attendeeCount: Number(event.target.value)
-                          }
-                        }))
-                      }
-                      disabled={!state.attending}
-                    />
-                  </label>
-                </div>
-              );
-            })}
+            <label>
+              {t('bringingPlusOne')}
+              <select
+                value={bringingPlusOne ? 'yes' : 'no'}
+                onChange={(event) => {
+                  const nextValue = event.target.value === 'yes' && plusOneAvailable;
+                  setBringingPlusOne(nextValue);
+                  if (!nextValue) {
+                    setPlusOneName('');
+                  }
+                }}
+                disabled={!plusOneAvailable}
+              >
+                <option value="no">{t('no')}</option>
+                <option value="yes">{t('yes')}</option>
+              </select>
+            </label>
           </div>
+
+          {!plusOneAvailable ? <p className="field-note">{t('plusOneNotAvailable')}</p> : null}
+
+          {bringingPlusOne && plusOneAvailable ? (
+            <label>
+              {t('plusOneName')}
+              <input value={plusOneName} onChange={(event) => setPlusOneName(event.target.value)} required />
+            </label>
+          ) : null}
 
           <label>
             {t('dietaryNotes')}
@@ -240,21 +249,55 @@ export function RsvpForm({ locale }: Props) {
           </label>
 
           <label>
-            {t('plushieCount')}
-            <input
-              type="number"
-              min={0}
-              value={plushieCount}
-              onChange={(event) => setPlushieCount(Math.max(0, Number(event.target.value)))}
+            {t('transportMode')}
+            <select value={transportMode} onChange={(event) => setTransportMode(event.target.value)} required>
+              <option value="">{t('transportPlaceholder')}</option>
+              <option value="SELF_DRIVING">{t('transportSelfDriving')}</option>
+              <option value="CARPOOL">{t('transportCarpool')}</option>
+              <option value="SHUTTLE">{t('transportShuttle')}</option>
+            </select>
+          </label>
+
+          <div className="stack">
+            <h3>{t('attendanceTitle')}</h3>
+            <div className="attendance-grid">
+              {lookup.events.map((eventItem) => {
+                const attending = Boolean(eventSelections[eventItem.id]);
+                return (
+                  <label
+                    key={eventItem.id}
+                    className={`attendance-option ${attending ? 'selected' : ''}`.trim()}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={attending}
+                      onChange={() => toggleEvent(eventItem.id)}
+                    />
+                    <span className="attendance-option-copy">
+                      <strong>{eventItem.name}</strong>
+                      <span>{new Date(eventItem.startsAt).toLocaleString(locale)}</span>
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+
+          <label>
+            {t('songRequests')}
+            <textarea
+              value={songRequestsText}
+              onChange={(event) => setSongRequestsText(event.target.value)}
+              rows={4}
             />
           </label>
 
           <label>
-            {t('karaokeSongs')}
+            {t('messageToCouple')}
             <textarea
-              value={karaokeSongsText}
-              onChange={(event) => setKaraokeSongsText(event.target.value)}
-              rows={4}
+              value={messageToCouple}
+              onChange={(event) => setMessageToCouple(event.target.value)}
+              rows={5}
             />
           </label>
 

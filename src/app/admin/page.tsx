@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { requireAdminUser } from '@/lib/auth';
+import { getAdminSnapshotFromDevStore, shouldUseDevRsvpStore } from '@/lib/dev-rsvp-store';
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
@@ -7,20 +8,35 @@ export const dynamic = 'force-dynamic';
 export default async function AdminDashboardPage() {
   const user = await requireAdminUser();
 
-  const [households, events, totalRsvps] = await Promise.all([
-    prisma.household.findMany({
-      include: {
-        rsvp: true,
-        eventResponses: {
-          include: { event: true },
-          orderBy: { event: { sortOrder: 'asc' } }
-        }
-      },
-      orderBy: { householdName: 'asc' }
-    }),
-    prisma.event.findMany({ where: { enabled: true }, orderBy: { sortOrder: 'asc' } }),
-    prisma.householdRsvp.count()
-  ]);
+  let households;
+  let events;
+  let totalRsvps;
+
+  try {
+    [households, events, totalRsvps] = await Promise.all([
+      prisma.household.findMany({
+        include: {
+          rsvp: true,
+          eventResponses: {
+            include: { event: true },
+            orderBy: { event: { sortOrder: 'asc' } }
+          }
+        },
+        orderBy: { householdName: 'asc' }
+      }),
+      prisma.event.findMany({ where: { enabled: true }, orderBy: { sortOrder: 'asc' } }),
+      prisma.householdRsvp.count()
+    ]);
+  } catch (error) {
+    if (!shouldUseDevRsvpStore(error)) {
+      throw error;
+    }
+
+    const snapshot = await getAdminSnapshotFromDevStore();
+    households = snapshot.households;
+    events = snapshot.events;
+    totalRsvps = snapshot.totalRsvps;
+  }
 
   return (
     <main className="stack">
@@ -81,8 +97,9 @@ export default async function AdminDashboardPage() {
               <th align="left">Household</th>
               <th align="left">Code</th>
               <th align="left">Submitted</th>
-              <th align="left">Plushies</th>
-              <th align="left">Songs</th>
+              <th align="left">Guest</th>
+              <th align="left">Plus One</th>
+              <th align="left">Transport</th>
             </tr>
           </thead>
           <tbody>
@@ -91,8 +108,9 @@ export default async function AdminDashboardPage() {
                 <td>{household.householdName}</td>
                 <td>{household.code}</td>
                 <td>{household.rsvp?.submittedAt ? new Date(household.rsvp.submittedAt).toLocaleString() : '-'}</td>
-                <td>{household.rsvp?.plushieCount ?? 0}</td>
-                <td>{household.rsvp?.karaokeSongsText ?? '-'}</td>
+                <td>{household.rsvp?.guestName ?? '-'}</td>
+                <td>{household.rsvp?.bringingPlusOne ? household.rsvp.plusOneName ?? 'Yes' : 'No'}</td>
+                <td>{household.rsvp?.transportMode ?? '-'}</td>
               </tr>
             ))}
           </tbody>

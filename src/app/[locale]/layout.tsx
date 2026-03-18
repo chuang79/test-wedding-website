@@ -2,7 +2,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import { routing } from '@/i18n/routing';
 
 export function generateStaticParams() {
@@ -14,15 +14,21 @@ function isSupportedLocale(locale: string) {
 }
 
 const localeMeta = {
-  en: { label: 'English' },
-  'zh-TW': { label: '繁體中文' },
-  'zh-CN': { label: '简体中文' }
+  en: { label: 'EN' },
+  'zh-TW': { label: '繁中' },
+  'zh-CN': { label: '簡中' }
 } as const;
 
 const navLabels = {
-  en: { overview: 'Scroll', schedule: 'Chapters', rsvp: 'RSVP' },
-  'zh-TW': { overview: '瀏覽', schedule: '章節', rsvp: '回覆' },
-  'zh-CN': { overview: '浏览', schedule: '章节', rsvp: '回复' }
+  en: {
+    overview: 'The Wedding',
+    schedule: 'Travel Details',
+    rsvp: 'RSVP',
+    faq: 'FAQ',
+    assistant: 'Ask Kittie'
+  },
+  'zh-TW': { overview: '瀏覽', schedule: '章節', rsvp: '回覆', faq: 'FAQ', assistant: '小幫手' },
+  'zh-CN': { overview: '浏览', schedule: '章节', rsvp: '回复', faq: 'FAQ', assistant: '助手' }
 } as const;
 
 const footerCopy = {
@@ -49,9 +55,11 @@ export default async function LocaleLayout({
   const messages = await getMessages();
   const labels = navLabels[locale as keyof typeof navLabels];
   const navItems = [
-    { href: `/${locale}#overview`, label: labels.overview },
-    { href: `/${locale}#schedule`, label: labels.schedule },
-    { href: `/${locale}/rsvp`, label: labels.rsvp }
+    { href: `/${locale}#wedding`, label: labels.overview },
+    { href: `/${locale}#travel`, label: labels.schedule },
+    { href: `/${locale}/rsvp`, label: labels.rsvp },
+    { href: `/${locale}/faq`, label: labels.faq },
+    { href: `/${locale}/chat`, label: labels.assistant }
   ];
 
   return (
@@ -60,8 +68,10 @@ export default async function LocaleLayout({
         <header className="site-header">
           <div className="site-header-inner">
             <a href={`/${locale}#overview`} className="brand-mark">
-              <span className="brand-title">C+J Wedding</span>
-              <span className="brand-subtitle">May 2027</span>
+              <span className="brand-title">C&amp;J Wedding</span>
+              <span className="brand-subtitle">
+                May 2027<span className="brand-subtitle-place">, Tuscany</span>
+              </span>
             </a>
 
             <nav className="site-nav" aria-label="Main">
@@ -73,14 +83,16 @@ export default async function LocaleLayout({
             </nav>
 
             <nav className="locale-switcher" aria-label="Language">
-              {routing.locales.map((item) => (
-                <Link
-                  key={item}
-                  href={`/${item}`}
-                  className={`locale-chip ${item === locale ? 'active' : ''}`.trim()}
-                >
-                  {localeMeta[item].label}
-                </Link>
+              {routing.locales.map((item, index) => (
+                <Fragment key={item}>
+                  {index > 0 ? <span className="locale-divider">/</span> : null}
+                  <Link
+                    href={`/${item}`}
+                    className={`locale-chip ${item === locale ? 'active' : ''}`.trim()}
+                  >
+                    {localeMeta[item].label}
+                  </Link>
+                </Fragment>
               ))}
             </nav>
           </div>

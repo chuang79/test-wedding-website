@@ -57,9 +57,14 @@ model HouseholdEventResponse {
 model HouseholdRsvp {
   id               String    @id @default(cuid())
   householdId      String    @unique
+  guestName        String?
+  bringingPlusOne  Boolean   @default(false)
+  plusOneName      String?
   dietaryNotes     String?
+  transportMode    String?
   plushieCount     Int       @default(0)
   karaokeSongsText String?
+  messageToCouple  String?
   submittedAt      DateTime?
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt

@@ -11,8 +11,8 @@ export default async function RsvpPage({
   const t = await getTranslations({ locale, namespace: 'rsvp' });
 
   return (
-    <main className="stack">
-      <section className="stack card hero">
+    <main className="stack content-page">
+      <section className="stack hero content-hero">
         <span className="badge">RSVP</span>
         <h1>{t('pageTitle')}</h1>
         <p className="hero-subtext">{t('pageIntro')}</p>
@@ -20,7 +20,7 @@ export default async function RsvpPage({
 
       <RsvpForm locale={locale} />
 
-      <div className="row">
+      <div className="row content-row">
         <Link className="btn btn-ghost" href={`/${locale}/faq`}>
           {t('faqCta')}
         </Link>

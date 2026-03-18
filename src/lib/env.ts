@@ -23,3 +23,9 @@ export const env = {
   NOTIFY_FROM_EMAIL: process.env.NOTIFY_FROM_EMAIL,
   NOTIFY_TO_EMAIL: process.env.NOTIFY_TO_EMAIL
 };
+
+export const isSupabaseConfigured =
+  !env.SUPABASE_URL.includes('YOUR-PROJECT') &&
+  !env.SUPABASE_ANON_KEY.includes('YOUR_SUPABASE') &&
+  Boolean(env.SUPABASE_URL) &&
+  Boolean(env.SUPABASE_ANON_KEY);
