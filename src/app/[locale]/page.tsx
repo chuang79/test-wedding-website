@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { getTranslations } from 'next-intl/server';
 import HeroCountdown from './hero-countdown';
 
@@ -149,9 +150,13 @@ export default async function HomePage({
     <main className="home-flow">
       <section id="overview" className="home-section section-anchor">
         <div className="hero-bg" aria-hidden>
-          <img
+          <Image
             src="https://contidisanbonifacio.com/wp-content/uploads/conti-di-san-bonifacio-boutique-hotel-wine-resort-in-tuscany.webp"
             alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="hero-bg-image"
           />
         </div>
         <div className="home-section-inner">
@@ -187,7 +192,14 @@ export default async function HomePage({
                     <p>{copy.venueAddress}</p>
                   </div>
                   <figure className="wedding-layout-map">
-                    <img src="/map-demo.svg" alt="Cartographic map of Maremma, Toscana" />
+                    <Image
+                      src="/map-demo.svg"
+                      alt="Cartographic map of Maremma, Toscana"
+                      width={580}
+                      height={380}
+                      className="wedding-layout-map-image"
+                      unoptimized
+                    />
                   </figure>
                 </div>
 

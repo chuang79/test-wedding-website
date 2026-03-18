@@ -6,6 +6,8 @@ function required(name: string) {
   return value;
 }
 
+const DEFAULT_ADMIN_EMAILS = 'jck.ooo.lic@gmail.com';
+
 export const env = {
   DATABASE_URL: process.env.DATABASE_URL,
   DIRECT_URL: process.env.DIRECT_URL,
@@ -15,7 +17,7 @@ export const env = {
   NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
   RSVP_DEADLINE: process.env.RSVP_DEADLINE ?? '2027-05-13T23:59:00-07:00',
   VENUE_TIMEZONE: process.env.VENUE_TIMEZONE ?? 'America/Los_Angeles',
-  ADMIN_ALLOWED_EMAILS: (process.env.ADMIN_ALLOWED_EMAILS ?? '')
+  ADMIN_ALLOWED_EMAILS: (process.env.ADMIN_ALLOWED_EMAILS?.trim() || DEFAULT_ADMIN_EMAILS)
     .split(',')
     .map((item) => item.trim().toLowerCase())
     .filter(Boolean),
